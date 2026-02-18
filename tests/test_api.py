@@ -77,4 +77,47 @@ def test_rsvp_to_public_event_succeeds_without_auth():
     assert response.status_code == 201
     assert response.json()["event_id"] == event_id
     assert response.json()["attending"] is True
+
+def test_duplicate_username_registration_returns_400():
+    username = f"duplicate_{int(time.time())}"
+    data = {"username": username, "password": "testpassword"}
+
+    # First registration succeeds
+    response1 = requests.post(f"{BASE_URL}/api/auth/register", json=data)
+    assert response1.status_code == 201
+
+    # Second registration with same username fails
+    response2 = requests.post(f"{BASE_URL}/api/auth/register", json=data)
+    assert response2.status_code == 400
+    assert "already exists" in response2.json()["error"]
+
+def test_create_event_without_auth_returns_401():
+    event_data = {
+        "title": "Unauthorized Event",
+        "date": "2026-08-01T18:00:00",
+    }
+
+    response = requests.post(f"{BASE_URL}/api/events", json=event_data)
+
+    assert response.status_code == 401
+
+def test_rsvp_to_non_public_event_without_auth_returns_401():
+    # Create a non-public event (requires auth)
+    token = get_auth_token()
+    headers = {"Authorization": f"Bearer {token}"}
+
+    event_data = {
+        "title": "Private Event",
+        "date": "2026-08-01T18:00:00",
+        "is_public": False,
+    }
+
+    event_response = requests.post(f"{BASE_URL}/api/events", json=event_data, headers=headers)
+    event_id = event_response.json()["id"]
+
+    # RSVP without auth
+    response = requests.post(f"{BASE_URL}/api/rsvps/event/{event_id}", json={"attending": True})
+
+    assert response.status_code == 401
+    assert "Authentication required" in response.json()["error"]
     
