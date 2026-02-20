@@ -43,6 +43,28 @@ python app.py
 
 The API will be available at `http://localhost:5000`
 
+## Testing
+
+The project includes unit and integration tests using `pytest`.
+
+### Running Tests
+
+1. Make sure the API server is running:
+```bash
+python app.py
+```
+
+2. In a separate terminal, activate the virtual environment and run:
+```bash
+pytest -v
+```
+
+### Test Structure
+
+- `tests/test_models.py` — Unit tests (e.g. password hashing), no server required
+- `tests/test_api.py` — Integration tests against the running API
+- `tests/conftest.py` — Shared test configuration and helpers
+
 ## Swagger UI Documentation
 
 The API includes interactive Swagger UI documentation. After starting the server:
