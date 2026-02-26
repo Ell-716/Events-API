@@ -1,0 +1,15 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.db
+*.sqlite*
+instance/
+.env
+.git/
+.gitignore
+README.md
+course/
+tests/
