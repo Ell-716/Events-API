@@ -39,7 +39,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest -v
+          python -m pytest -v
 
       - name: Cleanup
         if: always()
