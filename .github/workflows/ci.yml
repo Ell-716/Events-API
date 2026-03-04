@@ -62,6 +62,16 @@ jobs:
         run: |
           docker push elenabai83/events-api:latest
           docker push elenabai83/events-api:${{ github.sha }}
+
       - name: Trigger Render Deployment
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+      - name: Smoke test - Health check
+        run: |
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.RENDER_BASE_URL }}/api/health)
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Health check failed with status $RESPONSE"
+            exit 1
+          fi
+          echo "Health check passed!"
